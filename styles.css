@@ -1,0 +1,429 @@
+/* Main Styles for Futuristic Media Player */
+
+/* Base Styles and Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #121212;
+  color: white;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Media Player Module Base */
+.media-player-module {
+  position: relative;
+  padding: 40px;
+  border-radius: var(--border-radius);
+  background-color: var(--theme-background);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.media-player-module::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--theme-gradient);
+  box-shadow: 0 0 15px var(--theme-glow);
+  z-index: 1;
+}
+
+/* Player Header */
+.player-header {
+  position: relative;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.album-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--theme-text);
+  text-shadow: 0 0 10px var(--theme-glow);
+  letter-spacing: 1px;
+}
+
+.theme-selector {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.theme-button {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--theme-primary);
+  color: var(--theme-text);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.theme-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px var(--theme-glow);
+}
+
+.theme-button.active {
+  background-color: var(--theme-primary);
+  color: var(--theme-background);
+  box-shadow: 0 0 15px var(--theme-glow);
+}
+
+/* Tracks Grid */
+.tracks-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  gap: var(--spacing-unit);
+  margin-bottom: 40px;
+}
+
+/* Track Item */
+.track-item {
+  position: relative;
+  background-color: var(--theme-surface);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  aspect-ratio: var(--track-aspect-ratio);
+}
+
+.track-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--border-radius);
+  padding: 2px;
+  background: var(--theme-gradient);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.track-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 15px var(--theme-glow);
+}
+
+/* Track Number */
+.track-number {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--theme-primary);
+  opacity: 0.7;
+}
+
+/* Track Info */
+.track-info {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.track-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--theme-text);
+}
+
+.track-duration {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Track Progress */
+.track-progress {
+  width: 100%;
+  margin-top: auto;
+}
+
+.progress-bar {
+  position: relative;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--theme-gradient);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+
+.preview-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--theme-text);
+  white-space: nowrap;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.track-item:hover .preview-indicator {
+  opacity: 1;
+}
+
+/* Track Controls */
+.track-controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.control-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--theme-gradient);
+  color: var(--theme-background);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.control-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4), 0 0 15px var(--theme-glow);
+}
+
+.control-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: scale(1);
+  box-shadow: none;
+}
+
+.pause-icon {
+  display: none;
+}
+
+.track-item.playing .play-icon {
+  display: none;
+}
+
+.track-item.playing .pause-icon {
+  display: inline;
+}
+
+/* Track Visualizer */
+.track-visualizer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 3px;
+  height: 30px;
+  margin-top: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.track-item.playing .track-visualizer {
+  opacity: 1;
+}
+
+.visualizer-bar {
+  width: 4px;
+  height: 5px;
+  background-color: var(--theme-primary);
+  border-radius: 2px;
+  transition: height 0.1s ease;
+}
+
+/* Purchase Section */
+.player-footer {
+  margin-top: 30px;
+}
+
+.purchase-section {
+  background-color: var(--theme-surface);
+  border-radius: var(--border-radius);
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.purchase-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--border-radius);
+  padding: 2px;
+  background: var(--theme-gradient);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.preview-message,
+.purchased-message {
+  text-align: center;
+  max-width: 600px;
+}
+
+.preview-badge,
+.purchased-badge {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.preview-badge {
+  background-color: var(--theme-highlight);
+  color: var(--theme-background);
+}
+
+.purchased-badge {
+  background-color: var(--theme-primary);
+  color: var(--theme-background);
+}
+
+.purchase-button,
+.download-all-button {
+  padding: 12px 30px;
+  border-radius: 30px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.purchase-button {
+  background: var(--theme-gradient);
+  color: var(--theme-background);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.download-all-button {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-primary);
+}
+
+.purchase-button:hover,
+.download-all-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 0 15px var(--theme-glow);
+}
+
+.download-all-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Utility Classes */
+.hidden {
+  display: none;
+}
+
+/* Preview Mode Styling */
+.preview-mode .track-progress .progress-bar {
+  position: relative;
+}
+
+.preview-mode .track-progress .progress-bar::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 70%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.1) 5px,
+    rgba(255, 255, 255, 0.2) 5px,
+    rgba(255, 255, 255, 0.2) 10px
+  );
+  border-left: 2px solid var(--theme-highlight);
+  opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .tracks-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .tracks-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .album-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .tracks-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .media-player-module {
+    padding: 20px;
+  }
+
+  .album-title {
+    font-size: 1.5rem;
+  }
+
+  .purchase-button,
+  .download-all-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
