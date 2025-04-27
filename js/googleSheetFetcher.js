@@ -7,12 +7,15 @@
 
 class GoogleSheetFetcher {
   constructor() {
-    // Now that you have a working CSV URL, set this to false
-    this.useLocalData = false
+    // Change this to true to use local data
+    this.useLocalData = true
 
     // Update this with your published CSV URL
     this.publishedSheetUrl =
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vSeBHuwN87UTin6bqy7mVFDXOrgQ8EtB7eUAwittvrxusXPEQZFGb-1BiKUPqYXlRv8DuxoXGrDeeFg/pub?output=csv"
+
+    // Add this line to specify the local CSV file path
+    this.localCsvPath = "mediaplayer - Sheet1.csv"
 
     // Cache for album data
     this.albumsCache = null
@@ -30,12 +33,26 @@ class GoogleSheetFetcher {
       return this.albumsCache
     }
 
-    // Since the Google Sheet URL is not working, we'll use the sample data
+    // Use local CSV file
     if (this.useLocalData) {
-      console.log("Using local sample data since Google Sheet URL is not accessible")
-      const sampleData = this.getSampleAlbumData()
-      this.albumsCache = sampleData
-      return sampleData
+      console.log("Using local CSV file")
+      try {
+        const response = await fetch(this.localCsvPath)
+        if (!response.ok) {
+          throw new Error(`Failed to fetch local CSV: ${response.status} ${response.statusText}`)
+        }
+        
+        const csvText = await response.text()
+        const albums = this.parseCSV(csvText)
+        this.albumsCache = albums
+        return albums
+      } catch (error) {
+        console.error("Error fetching local CSV:", error)
+        console.log("Falling back to sample data")
+        const sampleData = this.getSampleAlbumData()
+        this.albumsCache = sampleData
+        return sampleData
+      }
     }
 
     try {
