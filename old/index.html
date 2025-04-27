@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Media Player Module</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="theme_variations.css">
+</head>
+<body>
+    <div class="container">
+        <div class="media-player-module theme-default">
+            <div class="player-header">
+                <h2 class="album-title">Loading album...</h2>
+                <div class="theme-selector">
+                    <button class="theme-button active" data-theme="theme-default">Default</button>
+                    <button class="theme-button" data-theme="theme-cyberpunk">Cyberpunk</button>
+                    <button class="theme-button" data-theme="theme-neon-sunset">Neon Sunset</button>
+                    <button class="theme-button" data-theme="theme-digital-ocean">Digital Ocean</button>
+                </div>
+            </div>
+            
+            <div class="tracks-grid">
+                <!-- Tracks will be dynamically added here -->
+                <div class="loading-indicator">Loading tracks...</div>
+            </div>
+            
+            <div class="player-footer">
+                <div class="purchase-section preview-mode">
+                    <div class="preview-message">
+                        <div class="preview-badge">PREVIEW MODE</div>
+                        <p>You're listening to 30-second previews. Purchase to unlock full tracks and downloads.</p>
+                    </div>
+                    <button class="purchase-button">
+                        <span class="purchase-text">Buy Full Album for $6.95</span>
+                        <span class="purchase-icon">🔓</span>
+                    </button>
+                    <button class="download-all-button" disabled>
+                        <span class="download-all-text">Download All Tracks</span>
+                        <span class="download-all-icon">↓</span>
+                    </button>
+                </div>
+                <div class="purchase-section purchased-mode hidden">
+                    <div class="purchased-message">
+                        <div class="purchased-badge">FULL ACCESS</div>
+                        <p>Thank you for your purchase! You now have full access to all tracks and downloads.</p>
+                    </div>
+                    <button class="download-all-button">
+                        <span class="download-all-text">Download All Tracks</span>
+                        <span class="download-all-icon">↓</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Google Sheet Integration -->
+    <script src="js/googleSheetFetcher.js"></script>
+    <script src="js/albumSelector.js"></script>
+    <script src="player.js"></script>
+    <script src="js/album-handler.js"></script>
+</body>
+</html>
