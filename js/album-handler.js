@@ -1,12 +1,18 @@
-// Album loading functionality
+/**
+ * Album Handler Module
+ * 
+ * This module handles URL parameters for album selection and theme application.
+ * It integrates with the existing GoogleSheetFetcher to load album data.
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
   // Parse URL parameters
   const urlParams = new URLSearchParams(window.location.search);
   const albumId = urlParams.get("albumId");
   const theme = urlParams.get("theme");
 
-  console.log("Album ID:", albumId);
-  console.log("Theme:", theme);
+  console.log("Album ID from URL:", albumId);
+  console.log("Theme from URL:", theme);
 
   // Apply theme if specified
   if (theme) {
@@ -14,96 +20,136 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Load album if ID is provided
-  if (albumId) {
-    loadAlbum(albumId);
-  } else {
-    // Show a message if no album ID is provided
-    const albumTitle = document.querySelector(".album-title");
-    if (albumTitle) {
-      albumTitle.textContent = "No Album Selected";
-    }
-    
-    const loadingIndicator = document.querySelector(".loading-indicator");
-    if (loadingIndicator) {
-      loadingIndicator.textContent = "Please provide an album ID in the URL (e.g., ?albumId=123)";
-    }
+  if (albumId && window.googleSheetFetcher) {
+    loadAlbumById(albumId);
   }
 });
 
+/**
+ * Apply a theme to the player
+ * @param {string} theme - The theme name to apply
+ */
 function applyTheme(theme) {
-  // Find the theme button
+  // Find the theme button with matching data-theme
   const themeButtons = document.querySelectorAll(".theme-button");
-  const themeContainer = document.querySelector(".media-player-module");
   
-  // Remove all theme classes from container
-  if (themeContainer) {
-    themeContainer.className = "media-player-module";
-    themeContainer.classList.add(`theme-${theme}`);
+  // Find the player container
+  const playerContainer = document.querySelector(".media-player-module");
+  
+  // Apply theme class to container
+  if (playerContainer) {
+    // Remove existing theme classes
+    const themeClasses = Array.from(playerContainer.classList)
+      .filter(cls => cls.startsWith("theme-"));
+    
+    themeClasses.forEach(cls => playerContainer.classList.remove(cls));
+    
+    // Add new theme class
+    playerContainer.classList.add(`theme-${theme}`);
   }
-
+  
   // Update active button
-  themeButtons.forEach((button) => {
+  themeButtons.forEach(button => {
+    // Remove active class from all buttons
     button.classList.remove("active");
     
-    if (button.getAttribute("data-theme") === `theme-${theme}`) {
+    // Add active class to matching button
+    const buttonTheme = button.getAttribute("data-theme");
+    if (buttonTheme === `theme-${theme}`) {
       button.classList.add("active");
     }
   });
 }
 
+/**
+ * Load album by ID using the existing GoogleSheetFetcher
+ * @param {string} albumId - The album ID to load
+ */
 async function loadAlbum(albumId) {
   try {
     // Update loading message
-    const albumTitle = document.querySelector(".album-title");
-    const loadingIndicator = document.querySelector(".loading-indicator");
-    
-    if (loadingIndicator) {
-      loadingIndicator.textContent = `Loading album ${albumId}...`;
+    const loadingElement = document.querySelector("#loadingMessage") || document.querySelector(".loading-message")
+    if (loadingElement) {
+      loadingElement.textContent = `Loading album ${albumId}...`
     }
 
-    // In a real implementation, you would fetch album data from an API or Google Sheet
-    // For now, we'll simulate loading with a timeout
-    setTimeout(() => {
-      if (albumTitle) {
-        albumTitle.textContent = `Album: ${albumId}`;
-      }
-      
-      if (loadingIndicator) {
-        loadingIndicator.textContent = "Album loaded successfully!";
-      }
-      
-      // Create some dummy tracks for demonstration
-      const tracksGrid = document.querySelector(".tracks-grid");
-      if (tracksGrid) {
-        // Clear existing content except the loading indicator
-        const loadingElement = tracksGrid.querySelector(".loading-indicator");
-        tracksGrid.innerHTML = "";
-        
-        // Add demo tracks
-        for (let i = 1; i <= 5; i++) {
-          const trackDiv = document.createElement("div");
-          trackDiv.className = "track";
-          trackDiv.innerHTML = `
-            <div class="track-number">${i}</div>
-            <div class="track-title">Demo Track ${i}</div>
-            <div class="track-duration">${Math.floor(Math.random() * 3) + 2}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}</div>
-            <div class="track-preview-button">Preview</div>
-          `;
-          tracksGrid.appendChild(trackDiv);
-        }
-        
-        // Re-add the loading indicator but hide it
-        if (loadingElement) {
-          loadingElement.style.display = "none";
-          tracksGrid.appendChild(loadingElement);
-        }
-      }
-    }, 1500);
-  } catch (error) {
-    console.error("Error loading album:", error);
-    const loadingIndicator = document.querySelector(".loading-indicator");
-    if (loadingIndicator) {
-      loadingIndicator.textContent = "Error loading album. Please try again.";
+    // Use GoogleSheetFetcher to get album data
+    const fetcher = new GoogleSheetFetcher()
+    console.log("Fetching album data using GoogleSheetFetcher...")
+    const albumData = await fetcher.getAlbumById(albumId)
+    
+    console.log("Album data received:", albumData)
+    
+    if (!albumData) {
+      throw new Error(`Album ${albumId} not found`)
     }
+    
+    // Update UI with album data
+    const titleElement = document.querySelector("#albumTitle") || document.querySelector(".album-title")
+    if (titleElement) {
+      titleElement.textContent = albumData.title || `Album: ${albumId}`
+    }
+
+    if (loadingElement) {
+      loadingElement.textContent = ""
+    }
+
+    // Display tracks
+    const tracksContainer = document.querySelector("#tracksList") || document.querySelector(".tracks-container")
+    if (tracksContainer && albumData.tracks && albumData.tracks.length > 0) {
+      tracksContainer.innerHTML = ""
+      
+      albumData.tracks.forEach((track, index) => {
+        const trackElement = document.createElement("div")
+        trackElement.className = "track"
+        trackElement.innerHTML = `
+          <div class="track-number">${track.id || index + 1}</div>
+          <div class="track-title">${track.title}</div>
+          <div class="track-duration">${formatDuration(track.duration || 180)}</div>
+          <button class="play-button" data-src="${track.src}">Preview</button>
+        `
+        tracksContainer.appendChild(trackElement)
+      })
+      
+      // Add event listeners to play buttons
+      document.querySelectorAll(".play-button").forEach(button => {
+        button.addEventListener("click", function() {
+          const src = this.getAttribute("data-src")
+          playTrack(src)
+        })
+      })
+    } else {
+      // If no tracks found, show a message
+      if (tracksContainer) {
+        tracksContainer.innerHTML = "<div class='no-tracks'>No tracks found for this album</div>"
+      }
+    }
+  } catch (error) {
+    console.error("Error loading album:", error)
+    const loadingElement = document.querySelector("#loadingMessage") || document.querySelector(".loading-message")
+    if (loadingElement) {
+      loadingElement.textContent = `Error loading album: ${error.message}`
+    }
+  }
+}
+
+// Helper function to format duration
+function formatDuration(seconds) {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = Math.floor(seconds % 60)
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`
+}
+
+// Helper function to play a track
+function playTrack(src) {
+  const player = document.querySelector("#audioPlayer") || document.createElement("audio")
+  player.id = "audioPlayer"
+  player.controls = true
+  player.src = src
+  player.play()
+  
+  if (!document.querySelector("#audioPlayer")) {
+    const container = document.querySelector("#playerContainer") || document.body
+    container.appendChild(player)
   }
 }

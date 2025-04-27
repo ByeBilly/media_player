@@ -10,12 +10,13 @@ class GoogleSheetFetcher {
     // Change this to true to use local data
     this.useLocalData = true
 
+    // No longer needed since we're using local CSV files
+    // this.publishedSheetUrl =
+    //   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSeBHuwN87UTin6bqy7mVFDXOrgQ8EtB7eUAwittvrxusXPEQZFGb-1BiKUPqYXlRv8DuxoXGrDeeFg/pub?output=csv"
     // Update this with your published CSV URL
-    this.publishedSheetUrl =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vSeBHuwN87UTin6bqy7mVFDXOrgQ8EtB7eUAwittvrxusXPEQZFGb-1BiKUPqYXlRv8DuxoXGrDeeFg/pub?output=csv"
-
+    
     // Add this line to specify the local CSV file path
-    this.localCsvPath = "mediaplayer - Sheet1.csv"
+    this.localCsvPath = "Sheet1.csv"
 
     // Cache for album data
     this.albumsCache = null
